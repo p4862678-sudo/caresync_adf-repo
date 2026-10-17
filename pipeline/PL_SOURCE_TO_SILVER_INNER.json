@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Transfer data from pgsql to adls",
+				"name": "Source to Landing Ingestion",
 				"type": "Copy",
 				"dependsOn": [
 					{
