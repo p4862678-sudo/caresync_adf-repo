@@ -283,8 +283,6 @@
 						{
 							"name": "Set Watermark value",
 							"type": "SetVariable",
-							"state": "Inactive",
-							"onInactiveMarkAs": "Succeeded",
 							"dependsOn": [
 								{
 									"activity": "Get Watermark value",
@@ -301,7 +299,7 @@
 							"typeProperties": {
 								"variableName": "Watermark",
 								"value": {
-									"value": "@activity('Get Watermark value').output.firstRow",
+									"value": "@activity('Get Watermark value').output.firstRow.watermark_value",
 									"type": "Expression"
 								}
 							}
