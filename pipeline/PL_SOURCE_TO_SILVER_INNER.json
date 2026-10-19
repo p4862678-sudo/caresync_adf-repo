@@ -25,7 +25,7 @@
 					"source": {
 						"type": "PostgreSqlV2Source",
 						"query": {
-							"value": "select * from public.@{activity('Read Table config details').output.firstRow.source_table_name}",
+							"value": "select * from public.@{activity('Read Table config details').output.firstRow.source_table_name}\n@{\n    if(\n        equals(activity('Read Table config details').output.firstRow.load_type,'FULL')\n    ,'',\n    concat(' where ', activity('Read Table config details').output.firstRow.watermark_column, ' > ','''',variables('Watermark'),'''' )\n    )\n}",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00"
