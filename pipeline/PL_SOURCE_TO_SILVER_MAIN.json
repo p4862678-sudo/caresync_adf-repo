@@ -50,20 +50,101 @@
 					},
 					"activities": [
 						{
-							"name": "Set variable",
-							"type": "SetVariable",
-							"dependsOn": [],
+							"name": "Ingest from source to silver",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Insert In Progress status",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
-								"secureOutput": false,
 								"secureInput": false
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "test",
-								"value": {
-									"value": "@string(item().table_id)",
-									"type": "Expression"
+								"pipeline": {
+									"referenceName": "PL_SOURCE_TO_SILVER_INNER",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"table_id": {
+										"value": "@item().table_id",
+										"type": "Expression"
+									},
+									"Pipeline_runid": {
+										"value": "@pipeline().parameters.Pipeline_runid",
+										"type": "Expression"
+									}
 								}
+							}
+						},
+						{
+							"name": "Insert In Progress status",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 2,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "ls_sqldb",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "insert into ctrl.audit_log (adf_run_id,table_id,stage,status,start_time)\nvalues ('@{pipeline().parameters.Pipeline_runid}',\n'@{item().table_id}',\n'SOURCE_TO_SILVER',\n'IN_PROGRESS',\nsysutcdatetime())",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "Update Failed status",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "Ingest from source to silver",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "ls_sqldb",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "update ctrl.audit_log set status='FAILED' and end_time=sysutcdatetime() where adf_run_id='@{pipeline().parameters.Pipeline_runid}' and table_id='@{item().table_id}'",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
 							}
 						}
 					]
@@ -74,10 +155,17 @@
 			"source_system_ind": {
 				"type": "string",
 				"defaultValue": "neon_postgres"
+			},
+			"Pipeline_runid": {
+				"type": "string",
+				"defaultValue": "a2"
 			}
 		},
 		"variables": {
 			"test": {
+				"type": "String"
+			},
+			"Pipeline Run ID": {
 				"type": "String"
 			}
 		},
