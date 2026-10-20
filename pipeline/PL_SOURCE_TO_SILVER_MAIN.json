@@ -155,11 +155,11 @@
 		"parameters": {
 			"source_system_ind": {
 				"type": "string",
-				"defaultValue": "neon_postgres"
+				"defaultValue": "adls_csv"
 			},
 			"Pipeline_runid": {
 				"type": "string",
-				"defaultValue": "a4"
+				"defaultValue": "a9"
 			}
 		},
 		"variables": {
