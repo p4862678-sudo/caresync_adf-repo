@@ -184,6 +184,14 @@
 						"landing_timestamp": {
 							"value": "@variables('currentts')",
 							"type": "Expression"
+						},
+						"merge_keys": {
+							"value": "@coalesce(activity('Read Table config details').output.firstRow.merge_keys,'')",
+							"type": "Expression"
+						},
+						"load_type": {
+							"value": "@activity('Read Table config details').output.firstRow.load_type",
+							"type": "Expression"
 						}
 					}
 				},
@@ -197,7 +205,7 @@
 				"type": "Script",
 				"dependsOn": [
 					{
-						"activity": "Bronze to silver",
+						"activity": "If Not Full Load update watermark",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -302,6 +310,56 @@
 									"value": "@activity('Get Watermark value').output.firstRow.watermark_value",
 									"type": "Expression"
 								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "If Not Full Load update watermark",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Bronze to silver",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@not(equals(activity('Read Table config details').output.firstRow.load_type,'Full' ))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Update watermark value",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "ls_sqldb",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "update ctrl.watermark set watermark_value=sysutcdatetime() \nwhere table_id=@{pipeline().parameters.table_id}",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
 							}
 						}
 					]
