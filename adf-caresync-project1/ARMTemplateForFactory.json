@@ -310,7 +310,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@not(equals(activity('Read Table config details').output.firstRow.load_type,'Full' ))",
+								"value": "@not(equals(activity('Read Table config details').output.firstRow.load_type,'FULL' ))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -384,7 +384,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@not(equals(activity('Read Table config details').output.firstRow.load_type,'Full' ))",
+								"value": "@not(equals(activity('Read Table config details').output.firstRow.load_type,'FULL' ))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
