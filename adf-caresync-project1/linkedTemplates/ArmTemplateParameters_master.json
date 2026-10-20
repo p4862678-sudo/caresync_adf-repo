@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-caresync-project1"
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"value": "1017-134821-fzllk7dn"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://caresync-keyvault-new.vault.azure.net/"
+		},
+		"PostgreSql1_properties_typeProperties_server": {
+			"value": "ep-wispy-cloud-b40fng69-pooler.c-6.us-east-2.aws.neon.tech"
+		},
+		"PostgreSql1_properties_typeProperties_database": {
+			"value": "neondb"
+		},
+		"PostgreSql1_properties_typeProperties_username": {
+			"value": "neondb_owner"
+		},
+		"ls_adls_properties_typeProperties_url": {
+			"value": "https://caresyncprojectbyprani.dfs.core.windows.net/"
+		},
+		"ls_sqldb_properties_typeProperties_server": {
+			"value": "caresync-sqlserver.database.windows.net"
+		},
+		"ls_sqldb_properties_typeProperties_database": {
+			"value": "caresync_sqldb"
+		},
+		"ls_sqldb_properties_typeProperties_userName": {
+			"value": "prani0503"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
