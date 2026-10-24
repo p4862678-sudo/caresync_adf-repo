@@ -410,6 +410,7 @@
 													"value": "@variables('Watermark')",
 													"type": "Expression"
 												},
+												"wildcardFileName": "*.csv",
 												"enablePartitionDiscovery": false
 											},
 											"formatSettings": {
