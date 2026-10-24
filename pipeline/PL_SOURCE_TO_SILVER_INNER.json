@@ -425,7 +425,7 @@
 											"formatSettings": {
 												"type": "DelimitedTextWriteSettings",
 												"quoteAllText": true,
-												"fileExtension": ".csv"
+												"fileExtension": ".txt"
 											}
 										},
 										"enableStaging": false,
@@ -443,10 +443,7 @@
 											"referenceName": "ds_csv_adls",
 											"type": "DatasetReference",
 											"parameters": {
-												"Folder_name": {
-													"value": "@activity('Read Table config details').output.firstRow.source_path",
-													"type": "Expression"
-												},
+												"Folder_name": "@activity('Read Table config details').output.firstRow.source_path",
 												"container": "source"
 											}
 										}
@@ -456,10 +453,7 @@
 											"referenceName": "ds_csv_adls",
 											"type": "DatasetReference",
 											"parameters": {
-												"Folder_name": {
-													"value": "@concat(\n    activity('Read Table config details').output.firstRow.source_system,\n    '/',\n    activity('Read Table config details').output.firstRow.source_table_name,\n    '/',\n    variables('currentts')\n    )",
-													"type": "Expression"
-												},
+												"Folder_name": "@concat(     activity('Read Table config details').output.firstRow.source_system,     '/',     activity('Read Table config details').output.firstRow.source_table_name,     '/',     variables('currentts')     )",
 												"container": "landing"
 											}
 										}
