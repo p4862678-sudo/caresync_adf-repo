@@ -316,7 +316,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"on": {
-						"value": "@activity('Read Table config details').output.firstRow.source_systen",
+						"value": "@activity('Read Table config details').output.firstRow.source_system",
 						"type": "Expression"
 					},
 					"cases": [
