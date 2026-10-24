@@ -1,5 +1,6 @@
 {
 	"name": "PostgreSql1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "PostgreSqlV2",

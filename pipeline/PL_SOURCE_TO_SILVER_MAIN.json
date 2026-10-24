@@ -155,11 +155,11 @@
 		"parameters": {
 			"source_system_ind": {
 				"type": "string",
-				"defaultValue": "adls_csv"
+				"defaultValue": "neon_postgres"
 			},
 			"Pipeline_runid": {
 				"type": "string",
-				"defaultValue": "a9"
+				"defaultValue": "a4"
 			}
 		},
 		"variables": {
@@ -170,6 +170,8 @@
 				"type": "String"
 			}
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2026-10-20T18:29:16Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }
