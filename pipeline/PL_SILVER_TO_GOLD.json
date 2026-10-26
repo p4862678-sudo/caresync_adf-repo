@@ -18,7 +18,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "select table_id from ctrl.table_config where is_active='True'",
+							"value": "select table_id,gold_table_name from ctrl.table_config where is_active='True' and stage='SILVER_TO_GOLD'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
@@ -51,39 +51,6 @@
 					"isSequential": false,
 					"activities": [
 						{
-							"name": "Ingest from source to silver",
-							"type": "ExecutePipeline",
-							"dependsOn": [
-								{
-									"activity": "Insert In Progress status",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"pipeline": {
-									"referenceName": "PL_SOURCE_TO_SILVER_INNER",
-									"type": "PipelineReference"
-								},
-								"waitOnCompletion": true,
-								"parameters": {
-									"table_id": {
-										"value": "@item().table_id",
-										"type": "Expression"
-									},
-									"Pipeline_runid": {
-										"value": "@pipeline().parameters.Pipeline_runid",
-										"type": "Expression"
-									}
-								}
-							}
-						},
-						{
 							"name": "Insert In Progress status",
 							"type": "Script",
 							"dependsOn": [],
@@ -104,7 +71,7 @@
 									{
 										"type": "Query",
 										"text": {
-											"value": "insert into ctrl.audit_log (adf_run_id,table_id,stage,status,start_time)\nvalues ('@{pipeline().parameters.Pipeline_runid}',\n'@{item().table_id}',\n'SOURCE_TO_SILVER',\n'IN_PROGRESS',\nsysutcdatetime())",
+											"value": "insert into ctrl.audit_log (adf_run_id,table_id,stage,status,start_time)\nvalues ('@{pipeline().parameters.Pipeline_runid}',\n'@{item().table_id}',\n'SILVER_TO_GOLD',\n'IN_PROGRESS',\nsysutcdatetime())",
 											"type": "Expression"
 										}
 									}
@@ -117,7 +84,7 @@
 							"type": "Script",
 							"dependsOn": [
 								{
-									"activity": "Ingest from source to silver",
+									"activity": "silver to gold",
 									"dependencyConditions": [
 										"Failed"
 									]
@@ -147,19 +114,81 @@
 								],
 								"scriptBlockExecutionTimeout": "02:00:00"
 							}
+						},
+						{
+							"name": "silver to gold",
+							"type": "DatabricksNotebook",
+							"dependsOn": [
+								{
+									"activity": "Insert In Progress status",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": {
+									"value": "/caresync-repo/caresync_adb_repo/Gold/NB_@{item().gold_table_name}",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureDatabricks1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Update Success status",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "silver to gold",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "ls_sqldb",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "update ctrl.audit_log set status='SUCCESS', end_time=sysutcdatetime(),\nrecords_written=@{activity('silver to gold').output.runOutput} where adf_run_id='@{pipeline().parameters.Pipeline_runid}' and table_id=@{item().table_id}",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
 						}
 					]
 				}
 			}
 		],
 		"parameters": {
-			"source_system_ind": {
-				"type": "string",
-				"defaultValue": "neon_postgres"
-			},
 			"Pipeline_runid": {
 				"type": "string",
-				"defaultValue": "a4"
+				"defaultValue": "a9"
 			}
 		},
 		"variables": {
