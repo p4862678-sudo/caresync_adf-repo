@@ -389,7 +389,7 @@
 							"value": "adls_csv",
 							"activities": [
 								{
-									"name": "To ingest CSV from source to landing",
+									"name": "To ingest csv data from source to landing",
 									"type": "Copy",
 									"dependsOn": [],
 									"policy": {
@@ -406,11 +406,6 @@
 											"storeSettings": {
 												"type": "AzureBlobFSReadSettings",
 												"recursive": false,
-												"modifiedDatetimeStart": {
-													"value": "@variables('Watermark')",
-													"type": "Expression"
-												},
-												"wildcardFileName": "*.csv",
 												"enablePartitionDiscovery": false
 											},
 											"formatSettings": {
@@ -443,11 +438,11 @@
 											"referenceName": "ds_csv_adls",
 											"type": "DatasetReference",
 											"parameters": {
-												"Folder_name": "source",
-												"container": {
+												"Folder_name": {
 													"value": "@activity('Read Table config details').output.firstRow.source_path",
 													"type": "Expression"
-												}
+												},
+												"container": "source"
 											}
 										}
 									],
@@ -456,8 +451,8 @@
 											"referenceName": "ds_csv_adls",
 											"type": "DatasetReference",
 											"parameters": {
-												"Folder_name": "landing",
-												"container": "@concat(     activity('Read Table config details').output.firstRow.source_system,     '/',     activity('Read Table config details').output.firstRow.source_table_name,     '/',     variables('currentts')     )"
+												"Folder_name": "@concat(     activity('Read Table config details').output.firstRow.source_system,     '/',     activity('Read Table config details').output.firstRow.source_table_name,     '/',     variables('currentts')     )",
+												"container": "landing"
 											}
 										}
 									]
