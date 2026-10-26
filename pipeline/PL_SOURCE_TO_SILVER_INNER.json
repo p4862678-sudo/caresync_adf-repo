@@ -428,36 +428,8 @@
 												"fileExtension": ".txt"
 											}
 										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ds_csv_adls",
-											"type": "DatasetReference",
-											"parameters": {
-												"Folder_name": "@activity('Read Table config details').output.firstRow.source_path",
-												"container": "source"
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ds_csv_adls",
-											"type": "DatasetReference",
-											"parameters": {
-												"Folder_name": "@concat(     activity('Read Table config details').output.firstRow.source_system,     '/',     activity('Read Table config details').output.firstRow.source_table_name,     '/',     variables('currentts')     )",
-												"container": "landing"
-											}
-										}
-									]
+										"enableStaging": false
+									}
 								}
 							]
 						}
