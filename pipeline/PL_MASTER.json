@@ -34,6 +34,12 @@
 						"dependencyConditions": [
 							"Completed"
 						]
+					},
+					{
+						"activity": "source to silver adls csv",
+						"dependencyConditions": [
+							"Completed"
+						]
 					}
 				],
 				"policy": {
