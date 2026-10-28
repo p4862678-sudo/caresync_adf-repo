@@ -172,7 +172,7 @@
 				"typeProperties": {
 					"variableName": "logic apps body",
 					"value": {
-						"value": "{\n    \"subject\":@{variables('email_subject')},\n    \"email_recipients\":@{pipeline().globalParameters.email_recipient},\n    \"body_header\":@{variables('Body Header')},\n    \"body_footer\":@{variables('Body Footer')},\n    \"status_table\":@{activity('Read audit details').output.value}\n}",
+						"value": "{\n    \"subject\": \"@{variables('email_subject')}\",\n    \"email_recipients\": \"@{pipeline().globalParameters.email_recipient}\",\n    \"body_header\": \"@{variables('Body Header')}\",\n    \"body_footer\": \"@{variables('Body Footer')}\",\n    \"status_table\": @{activity('Read audit details').output.value}\n}",
 						"type": "Expression"
 					}
 				}
