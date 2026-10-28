@@ -1,0 +1,32 @@
+{
+	"name": "tgr_caresync_daily",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PL_MASTER",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2026-10-28T19:08:00",
+				"timeZone": "India Standard Time",
+				"schedule": {
+					"minutes": [
+						42
+					],
+					"hours": [
+						1
+					]
+				}
+			}
+		}
+	}
+}
