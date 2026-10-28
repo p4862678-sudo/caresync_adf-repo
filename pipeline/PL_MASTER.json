@@ -26,40 +26,11 @@
 				}
 			},
 			{
-				"name": "Source to Silver adls_csv",
-				"type": "ExecutePipeline",
-				"dependsOn": [],
-				"policy": {
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "PL_SOURCE_TO_SILVER_MAIN",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true,
-					"parameters": {
-						"source_system_ind": "adls_csv",
-						"Pipeline_runid": {
-							"value": "@pipeline().RunId",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			{
 				"name": "Silver to Gold",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
 						"activity": "Source to Silver Postgres",
-						"dependencyConditions": [
-							"Completed"
-						]
-					},
-					{
-						"activity": "Source to Silver adls_csv",
 						"dependencyConditions": [
 							"Completed"
 						]
@@ -76,6 +47,29 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
+						"Pipeline_runid": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "source to silver adls csv",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_SOURCE_TO_SILVER_MAIN",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"source_system_ind": "adls_csv",
 						"Pipeline_runid": {
 							"value": "@pipeline().RunId",
 							"type": "Expression"
