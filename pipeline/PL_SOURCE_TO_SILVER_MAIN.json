@@ -18,7 +18,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "select table_id from ctrl.table_config where is_active='True' and source_system=@{pipeline().parameters.source_system_ind}",
+							"value": "@concat(\n    'SELECT table_id FROM ctrl.table_config WHERE is_active = ''True'' AND source_system = ''',\n    pipeline().parameters.source_system_ind,\n    ''''\n)",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
