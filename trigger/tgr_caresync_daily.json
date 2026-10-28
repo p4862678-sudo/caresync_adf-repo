@@ -2,7 +2,7 @@
 	"name": "tgr_caresync_daily",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipelines": [
 			{
 				"pipelineReference": {
