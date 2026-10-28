@@ -27,7 +27,8 @@
 					"dataset": {
 						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
@@ -61,7 +62,14 @@
 			{
 				"name": "prepare email subject",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Get status based on count",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"secureOutput": false,
 					"secureInput": false
@@ -69,7 +77,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "email_subject",
-					"value": "PROD|SUCCESS|CARESYNC MASTER RUN"
+					"value": {
+						"value": "@{pipeline().globalParameters.env} | @{variables('Status')} |CARESYNCMASTER RUN",
+						"type": "Expression"
+					}
 				}
 			},
 			{
@@ -87,7 +98,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select count(*) as count from ctrl.audit_log where adf_run_id='545d68f3-8f94-45dc-b87d-ab0b98497679' and status!='SUCCESS'",
+						"sqlReaderQuery": {
+							"value": "select count(*) as count from ctrl.audit_log where adf_run_id='@{pipeline().parameters.adf_run_id}' and status!='SUCCESS'",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -115,7 +129,52 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "Status",
-					"value": "@"
+					"value": {
+						"value": "@{if(equals(activity('Get Status count').output.firstRow.count,0),'SUCCESS','FAILED' )}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Logic apps body",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "prepare email subject",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Prepare Email Body Footer",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Prepare Email Body header",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Read audit details",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "logic apps body",
+					"value": {
+						"value": "{\n    \"subject\":@{variables('email_subject')},\n    \"email_recipients\":@{pipeline().globalParameters.email_recipient},\n    \"body_header\":@{variables('Body Header')},\n    \"body_footer\":@{variables('Body Footer')},\n    \"status_table\":@{activity('Read audit details').output.value}\n}",
+						"type": "Expression"
+					}
 				}
 			}
 		],
@@ -136,6 +195,9 @@
 				"type": "String"
 			},
 			"Status": {
+				"type": "String"
+			},
+			"logic apps body": {
 				"type": "String"
 			}
 		},
