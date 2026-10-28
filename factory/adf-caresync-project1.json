@@ -1,6 +1,12 @@
 {
 	"name": "adf-caresync-project1",
 	"properties": {
+		"globalParameters": {
+			"email_recipient": {
+				"type": "string",
+				"value": "samudralanagapraneta@gmail.com"
+			}
+		},
 		"trustModeClaimForMi": {
 			"value": "Disabled",
 			"editable": true
